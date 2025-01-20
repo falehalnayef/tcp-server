@@ -1,5 +1,5 @@
-use std::env;
 use dotenv::dotenv;
+use std::env;
 
 pub fn get_server_address() -> String {
     dotenv().ok();

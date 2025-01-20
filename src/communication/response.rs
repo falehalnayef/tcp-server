@@ -14,4 +14,3 @@ pub fn send_response(stream: &mut TcpStream, status_code: u16, status_text: &str
         eprintln!("Failed to send response: {}", e);
     }
 }
-

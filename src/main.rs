@@ -1,10 +1,10 @@
+mod communication;
 mod config;
 mod routes;
-mod communication;
 
-use std::{net::TcpListener, thread};
-use routes::handle_connection;
 use config::get_server_address;
+use routes::handle_connection;
+use std::{net::TcpListener, thread};
 
 fn main() {
     let address = get_server_address();
@@ -15,9 +15,7 @@ fn main() {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                thread::spawn(|| 
-                    handle_connection(stream)
-                );
+                thread::spawn(|| handle_connection(stream));
             }
             Err(e) => {
                 eprintln!("Connection error: {}", e);
