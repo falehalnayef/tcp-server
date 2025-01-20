@@ -1,20 +1,28 @@
 use std::io::{BufRead, BufReader};
 use std::net::TcpStream;
 
-pub fn parse_request(stream: &mut TcpStream) -> Result<(String, String), String> {
+pub fn parse_request(stream: &mut TcpStream) -> Result<Vec<String>, String> {
     let buf_reader = BufReader::new(stream);
-    let mut lines = buf_reader.lines();
+    let lines = buf_reader.lines();
 
-    if let Some(Ok(request_line)) = lines.next() {
-        let parts: Vec<&str> = request_line.split_whitespace().collect();
-        if parts.len() >= 2 {
-            let method = parts[0].to_string();
-            let path = parts[1].to_string();
-            return Ok((method, path));
-        } else {
-            return Err("Malformed request line".to_string());
+
+    let mut vec_lines = vec![];
+
+    for line in lines {
+        match line {
+            Ok(line_content) => {
+                if line_content.is_empty() {
+                    break;
+                }
+                vec_lines.push(line_content);
+            },
+            Err(e) => {
+                return Err(format!("Failed to read line: {}", e));
+            }
         }
     }
 
-    Err("Failed to read request".to_string())
-}
+     Ok(vec_lines)
+           
+} 
+   
