@@ -1,5 +1,4 @@
 pub mod base;
-pub mod not_found;
 
 use crate::communication::request::parse_request;
 use std::net::TcpStream;
@@ -16,12 +15,14 @@ pub fn handle_connection(mut stream: TcpStream) {
         ("GET", "/") => base::handle_root(&mut stream),
         ("GET", "/hello") => base::handle_hello(&mut stream),
         _ if path.starts_with("/echo/") => {
-            let data: &str = &path[6..];
-            base::handle_echo(&mut stream, data);
+            base::handle_echo(&mut stream, &path[6..]);
         }
         _ if path.starts_with("/user-agent") => {
             base::handle_user_agent(&mut stream, &request[1..]);
         }
-        _ => not_found::handle_404(&mut stream),
+        _ if path.starts_with("/files") => {
+            base::handle_file(&mut stream, &path[6..]);
+        }
+        _ => base::handle_404(&mut stream),
     }
 }

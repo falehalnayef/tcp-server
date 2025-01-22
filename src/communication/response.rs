@@ -1,11 +1,18 @@
 use std::io::Write;
 use std::net::TcpStream;
 
-pub fn send_response(stream: &mut TcpStream, status_code: u16, status_text: &str, body: &str) {
+pub fn send_response(
+    stream: &mut TcpStream,
+    status_code: u16,
+    status_text: &str,
+    content_type: &str,
+    body: &str,
+) {
     let response = format!(
-        "HTTP/1.1 {} {}\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+        "HTTP/1.1 {} {}\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}",
         status_code,
         status_text,
+        content_type,
         body.len(),
         body
     );
