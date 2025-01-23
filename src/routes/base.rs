@@ -2,7 +2,7 @@ use crate::communication::response::send_response;
 use std::{
     env,
     fs::File,
-    io::{self, Read},
+    io::{self, Read, Write},
     net::TcpStream,
     path::Path,
 };
@@ -57,7 +57,8 @@ pub fn handle_user_agent(stream: &mut TcpStream, headers: &[String]) {
     }
 }
 
-pub fn handle_file(stream: &mut TcpStream, data: &str) {
+pub fn handle_file(stream: &mut TcpStream, data: &str, body: Option<String>) {
+
     let dir = match get_directory() {
         Some(dir) => dir,
         None => {
@@ -68,6 +69,15 @@ pub fn handle_file(stream: &mut TcpStream, data: &str) {
     };
 
     let path = Path::new(&dir).join(data.trim_start_matches('/'));
+
+    if let Some(body_data) = body{
+        if let Ok(mut file) = File::create(&path){
+         let _ = file.write_all(body_data.as_bytes());
+         return;
+         
+        }
+    }
+
 
     if !path.exists() {
         handle_404(stream);
